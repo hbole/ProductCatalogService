@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ProductDTOMapper implements DTOMapper<Product, ProductDTO> {
-    private CategoryDTOMapper categoryDTOMapper;
+    private final CategoryDTOMapper categoryDTOMapper;
 
     public ProductDTOMapper(CategoryDTOMapper categoryDTOMapper) {
         this.categoryDTOMapper = categoryDTOMapper;

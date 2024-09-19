@@ -9,7 +9,15 @@ import org.springframework.stereotype.Component;
 public class FakeStoreProductDTOMapper implements DTOMapper<Product, FakeStoreProductDTO> {
     @Override
     public FakeStoreProductDTO toDTO(Product product) {
-        return null;
+        Category category = product.getCategory();
+        FakeStoreProductDTO fakeStoreProductDTO = new FakeStoreProductDTO();
+        fakeStoreProductDTO.setId(product.getId());
+        fakeStoreProductDTO.setTitle(product.getTitle());
+        fakeStoreProductDTO.setDescription(product.getDescription());
+        fakeStoreProductDTO.setImage(product.getImageUrl());
+        fakeStoreProductDTO.setCategory(category.getName());
+        fakeStoreProductDTO.setPrice(product.getPrice());
+        return fakeStoreProductDTO;
     }
 
     @Override

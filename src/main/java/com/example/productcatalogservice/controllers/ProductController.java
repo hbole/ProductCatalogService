@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.productcatalogservice.exceptions.ProductNotFoundException;
-import com.example.productcatalogservice.models.Category;
 import com.example.productcatalogservice.models.Product;
-import com.example.productcatalogservice.dto.CategoryDTO;
 import com.example.productcatalogservice.dto.ProductDTO;
 import com.example.productcatalogservice.dtomappers.DTOMapper;
 import com.example.productcatalogservice.services.IProductService;
@@ -17,35 +15,33 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ProductController {
-//    @Autowired
-    private IProductService productService;
-//    @Autowired
-    private DTOMapper<Product, ProductDTO> productDTOMapper;
-//    @Autowired
-    private DTOMapper<Category, CategoryDTO> categoryDTOMapper;
+    private final IProductService productService;
+    private final DTOMapper<Product, ProductDTO> productDTOMapper;
 
     public ProductController(
             IProductService productService,
-            DTOMapper<Product, ProductDTO> productDTOMapper,
-            DTOMapper<Category, CategoryDTO> categoryDTOMapper
+            DTOMapper<Product, ProductDTO> productDTOMapper
     ) {
         this.productService = productService;
         this.productDTOMapper = productDTOMapper;
-        this.categoryDTOMapper = categoryDTOMapper;
     }
 
     @GetMapping("/products")
-    public List<ProductDTO> getProducts() {
+    public ResponseEntity<List<ProductDTO>> getProducts() {
         List<Product> products = productService.getProducts();
         List<ProductDTO> productDTOs = new ArrayList<>();
-        for (Product product : products) {
-            productDTOs.add(productDTOMapper.toDTO(product));
+
+        if(products != null && !products.isEmpty()) {
+            for (Product product : products) {
+                productDTOs.add(productDTOMapper.toDTO(product));
+            }
         }
-        return productDTOs;
+
+        return new ResponseEntity<>(productDTOs, HttpStatus.OK);
     }
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") Long productId) {
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") Long productId) throws ProductNotFoundException {
         try {
             if(productId < 1 || productId > 20) {
                 throw new ProductNotFoundException("Product not found");
@@ -57,15 +53,31 @@ public class ProductController {
             }
             ProductDTO productDTO = productDTOMapper.toDTO(product);
             return new ResponseEntity<>(productDTO, HttpStatus.OK);
-        } catch (ProductNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (ProductNotFoundException exception) {
+            throw exception;
         }
     }
 
     @PostMapping("/products")
-    public ProductDTO addProduct(@RequestBody ProductDTO product) {
-        Product newProduct = productDTOMapper.toEntity(product);
-        Product savedProduct = productService.addProduct(newProduct);
-        return productDTOMapper.toDTO(savedProduct);
+    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO) {
+        try {
+            Product newProduct = productDTOMapper.toEntity(productDTO);
+            newProduct = productService.addProduct(newProduct);
+            return new ResponseEntity<>(productDTOMapper.toDTO(newProduct), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/products/{id}")
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") Long productId, @RequestBody ProductDTO productDTO) {
+        try {
+            Product product = productDTOMapper.toEntity(productDTO);
+            product = productService.updateProduct(productId, product);
+
+            return new ResponseEntity<>(productDTOMapper.toDTO(product), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

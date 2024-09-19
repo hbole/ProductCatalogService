@@ -1,7 +1,13 @@
 package com.example.productcatalogservice.exceptions;
 
-public class ProductNotFoundException extends Exception {
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatus;
+
+@Getter
+@Setter
+public class ProductNotFoundException extends CustomException {
     public ProductNotFoundException(String message) {
-        super(message);
+        super(message, HttpStatus.NOT_FOUND);
     }
 }
