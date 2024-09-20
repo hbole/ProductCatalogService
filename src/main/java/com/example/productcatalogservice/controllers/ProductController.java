@@ -76,7 +76,7 @@ public class ProductController {
             product = productService.updateProduct(productId, product);
 
             return new ResponseEntity<>(productDTOMapper.toDTO(product), HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (ProductNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

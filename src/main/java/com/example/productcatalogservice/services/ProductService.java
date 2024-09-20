@@ -1,71 +1,53 @@
 package com.example.productcatalogservice.services;
 
-import com.example.productcatalogservice.dto.FakeStoreProductDTO;
-import com.example.productcatalogservice.dtomappers.FakeStoreProductDTOMapper;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.example.productcatalogservice.exceptions.ProductNotFoundException;
+import com.example.productcatalogservice.repositories.ProductRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.example.productcatalogservice.models.Product;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Primary
 public class ProductService implements IProductService {
-    private final FakeStoreProductDTOMapper fakeStoreProductDTOMapper;
-    private final RestClientService restClientService;
+    private final ProductRepository productRepository;
 
-    public ProductService(
-            RestClientService restClientService,
-            FakeStoreProductDTOMapper fakeStoreProductDTOMapper
-    ) {
-        this.restClientService = restClientService;
-        this.fakeStoreProductDTOMapper = fakeStoreProductDTOMapper;
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Override
     public List<Product> getProducts() {
-        List<Product> products = new ArrayList<>();
-        String url = "https://fakestoreapi.com/products";
-        FakeStoreProductDTO[] fakeStoreProductDTOs = this.restClientService.requestForEntity(url, HttpMethod.GET, null, FakeStoreProductDTO[].class).getBody();
-
-        for(FakeStoreProductDTO fakeStoreProductDTO : fakeStoreProductDTOs) {
-            products.add(this.fakeStoreProductDTOMapper.toEntity(fakeStoreProductDTO));
-        }
-
-        return products;
+        return this.productRepository.findAll();
     }
 
     @Override
-    public Product getProductById(Long id) {
-        String url = "https://fakestoreapi.com/products/{productId}";
-        ResponseEntity<FakeStoreProductDTO> fakeStoreProductDTOResponseEntity = this.restClientService.requestForEntity(url, HttpMethod.GET, null, FakeStoreProductDTO.class, id);
+    public Product getProductById(Long id) throws ProductNotFoundException {
+        Optional<Product> optionalProduct = this.productRepository.findById(id);
 
-        FakeStoreProductDTO fakeStoreProductDTO = fakeStoreProductDTOResponseEntity.getBody();
-        if(fakeStoreProductDTOResponseEntity.getStatusCode().equals(HttpStatus.valueOf(200)) && fakeStoreProductDTO != null) {
-            return this.fakeStoreProductDTOMapper.toEntity(fakeStoreProductDTO);
+        if(optionalProduct.isPresent()) {
+            return optionalProduct.get();
+        } else {
+            throw new ProductNotFoundException("Product not found");
         }
-        return null;
     }
 
     @Override
     public Product addProduct(Product product) {
-        String url = "https://fakestoreapi.com/products";
-
-        FakeStoreProductDTO fakeStoreProductDTO = fakeStoreProductDTOMapper.toDTO(product);
-        ResponseEntity<FakeStoreProductDTO> fakeStoreProductDTOResponseEntity = this.restClientService.requestForEntity(url, HttpMethod.POST, fakeStoreProductDTO, FakeStoreProductDTO.class);
-        return this.fakeStoreProductDTOMapper.toEntity(fakeStoreProductDTOResponseEntity.getBody());
+        return this.productRepository.save(product);
     }
 
     @Override
-    public Product updateProduct(Long id, Product product) {
-        String url = "https://fakestoreapi.com/products/{productId}";
+    public Product updateProduct(Long id, Product product) throws ProductNotFoundException {
+        Optional<Product> optionalProduct = this.productRepository.findById(id);
 
-        FakeStoreProductDTO fakeStoreProductDTO = fakeStoreProductDTOMapper.toDTO(product);
-        ResponseEntity<FakeStoreProductDTO> fakeStoreProductDTOResponseEntity = this.restClientService.requestForEntity(url, HttpMethod.PUT, fakeStoreProductDTO, FakeStoreProductDTO.class, id);
-        return this.fakeStoreProductDTOMapper.toEntity(fakeStoreProductDTOResponseEntity.getBody());
+        if(optionalProduct.isPresent()) {
+            return this.productRepository.save(product);
+        } else {
+            throw new ProductNotFoundException("Product not found");
+        }
     }
-
 }
