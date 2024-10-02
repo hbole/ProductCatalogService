@@ -2,10 +2,7 @@ package com.example.productcatalogservice.controllers;
 
 import com.example.productcatalogservice.exceptions.CustomException;
 import com.example.productcatalogservice.exceptions.ProductNotFoundException;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

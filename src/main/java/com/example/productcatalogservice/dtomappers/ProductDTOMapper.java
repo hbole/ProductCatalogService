@@ -16,15 +16,19 @@ public class ProductDTOMapper implements DTOMapper<Product, ProductDTO> {
 
     @Override
     public ProductDTO toDTO(Product product) {
-        CategoryDTO categoryDTO = categoryDTOMapper.toDTO(product.getCategory());
         ProductDTO productDTO = new ProductDTO(
                 product.getId(),
                 product.getTitle(),
                 product.getDescription(),
                 product.getImageUrl(),
-                product.getPrice(),
-                categoryDTO
+                product.getPrice()
         );
+
+        if(product.getCategory() != null) {
+            CategoryDTO categoryDTO = categoryDTOMapper.toDTO(product.getCategory());
+            productDTO.setCategory(categoryDTO);
+        }
+
         return productDTO;
     }
 

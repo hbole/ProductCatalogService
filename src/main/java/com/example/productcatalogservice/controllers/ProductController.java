@@ -44,16 +44,18 @@ public class ProductController {
     public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") Long productId) throws ProductNotFoundException {
         try {
             if(productId < 1 || productId > 20) {
-                throw new ProductNotFoundException("Product not found");
+                throw new ProductNotFoundException("Invalid product id");
             }
 
             Product product = productService.getProductById(productId);
             if(product == null) {
-                return null;
+//                return null;
+                throw new ProductNotFoundException("Product not found");
             }
             ProductDTO productDTO = productDTOMapper.toDTO(product);
             return new ResponseEntity<>(productDTO, HttpStatus.OK);
         } catch (ProductNotFoundException exception) {
+            //return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
             throw exception;
         }
     }
