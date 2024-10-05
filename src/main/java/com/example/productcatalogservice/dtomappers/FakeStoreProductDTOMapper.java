@@ -6,9 +6,8 @@ import com.example.productcatalogservice.models.Product;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FakeStoreProductDTOMapper implements DTOMapper<Product, FakeStoreProductDTO> {
-    @Override
-    public FakeStoreProductDTO toDTO(Product product) {
+public class FakeStoreProductDTOMapper {
+    public static FakeStoreProductDTO toDTO(Product product) {
         Category category = product.getCategory();
         FakeStoreProductDTO fakeStoreProductDTO = new FakeStoreProductDTO();
         fakeStoreProductDTO.setId(product.getId());
@@ -20,8 +19,7 @@ public class FakeStoreProductDTOMapper implements DTOMapper<Product, FakeStorePr
         return fakeStoreProductDTO;
     }
 
-    @Override
-    public Product toEntity(FakeStoreProductDTO fakeStoreProductDTO) {
+    public static Product toEntity(FakeStoreProductDTO fakeStoreProductDTO) {
         Category category = new Category();
         category.setName(fakeStoreProductDTO.getCategory());
 

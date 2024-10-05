@@ -13,15 +13,12 @@ import java.util.List;
 
 @Service
 public class FakeStoreProductService implements IProductService {
-    private final FakeStoreProductDTOMapper fakeStoreProductDTOMapper;
     private final RestClientService restClientService;
 
     public FakeStoreProductService(
-            RestClientService restClientService,
-            FakeStoreProductDTOMapper fakeStoreProductDTOMapper
+            RestClientService restClientService
     ) {
         this.restClientService = restClientService;
-        this.fakeStoreProductDTOMapper = fakeStoreProductDTOMapper;
     }
 
     @Override
@@ -31,7 +28,7 @@ public class FakeStoreProductService implements IProductService {
         FakeStoreProductDTO[] fakeStoreProductDTOs = this.restClientService.requestForEntity(url, HttpMethod.GET, null, FakeStoreProductDTO[].class).getBody();
 
         for(FakeStoreProductDTO fakeStoreProductDTO : fakeStoreProductDTOs) {
-            products.add(this.fakeStoreProductDTOMapper.toEntity(fakeStoreProductDTO));
+            products.add(FakeStoreProductDTOMapper.toEntity(fakeStoreProductDTO));
         }
 
         return products;
@@ -44,7 +41,7 @@ public class FakeStoreProductService implements IProductService {
 
         FakeStoreProductDTO fakeStoreProductDTO = fakeStoreProductDTOResponseEntity.getBody();
         if(fakeStoreProductDTOResponseEntity.getStatusCode().equals(HttpStatus.valueOf(200)) && fakeStoreProductDTO != null) {
-            return this.fakeStoreProductDTOMapper.toEntity(fakeStoreProductDTO);
+            return FakeStoreProductDTOMapper.toEntity(fakeStoreProductDTO);
         }
         return null;
     }
@@ -53,17 +50,17 @@ public class FakeStoreProductService implements IProductService {
     public Product addProduct(Product product) {
         String url = "https://fakestoreapi.com/products";
 
-        FakeStoreProductDTO fakeStoreProductDTO = fakeStoreProductDTOMapper.toDTO(product);
+        FakeStoreProductDTO fakeStoreProductDTO = FakeStoreProductDTOMapper.toDTO(product);
         ResponseEntity<FakeStoreProductDTO> fakeStoreProductDTOResponseEntity = this.restClientService.requestForEntity(url, HttpMethod.POST, fakeStoreProductDTO, FakeStoreProductDTO.class);
-        return this.fakeStoreProductDTOMapper.toEntity(fakeStoreProductDTOResponseEntity.getBody());
+        return FakeStoreProductDTOMapper.toEntity(fakeStoreProductDTOResponseEntity.getBody());
     }
 
     @Override
     public Product updateProduct(Long id, Product product) {
         String url = "https://fakestoreapi.com/products/{productId}";
 
-        FakeStoreProductDTO fakeStoreProductDTO = fakeStoreProductDTOMapper.toDTO(product);
+        FakeStoreProductDTO fakeStoreProductDTO = FakeStoreProductDTOMapper.toDTO(product);
         ResponseEntity<FakeStoreProductDTO> fakeStoreProductDTOResponseEntity = this.restClientService.requestForEntity(url, HttpMethod.PUT, fakeStoreProductDTO, FakeStoreProductDTO.class, id);
-        return this.fakeStoreProductDTOMapper.toEntity(fakeStoreProductDTOResponseEntity.getBody());
+        return FakeStoreProductDTOMapper.toEntity(fakeStoreProductDTOResponseEntity.getBody());
     }
 }

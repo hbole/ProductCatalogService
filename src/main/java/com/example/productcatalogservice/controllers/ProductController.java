@@ -3,28 +3,27 @@ package com.example.productcatalogservice.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.productcatalogservice.dtomappers.ProductDTOMapper;
 import com.example.productcatalogservice.exceptions.ProductNotFoundException;
 import com.example.productcatalogservice.models.Product;
 import com.example.productcatalogservice.dto.ProductDTO;
-import com.example.productcatalogservice.dtomappers.DTOMapper;
 import com.example.productcatalogservice.services.IProductService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ProductController {
-    private final IProductService productService;
-    private final DTOMapper<Product, ProductDTO> productDTOMapper;
+    @Autowired
+    private IProductService productService;
 
-    public ProductController(
-            IProductService productService,
-            DTOMapper<Product, ProductDTO> productDTOMapper
-    ) {
-        this.productService = productService;
-        this.productDTOMapper = productDTOMapper;
-    }
+//    public ProductController(
+//            IProductService productService
+//    ) {
+//        this.productService = productService;
+//    }
 
     @GetMapping("/products")
     public ResponseEntity<List<ProductDTO>> getProducts() {
@@ -33,7 +32,7 @@ public class ProductController {
 
         if(products != null && !products.isEmpty()) {
             for (Product product : products) {
-                productDTOs.add(productDTOMapper.toDTO(product));
+                productDTOs.add(ProductDTOMapper.toDTO(product));
             }
         }
 
@@ -52,7 +51,7 @@ public class ProductController {
 //                return null;
                 throw new ProductNotFoundException("Product not found");
             }
-            ProductDTO productDTO = productDTOMapper.toDTO(product);
+            ProductDTO productDTO = ProductDTOMapper.toDTO(product);
             return new ResponseEntity<>(productDTO, HttpStatus.OK);
         } catch (ProductNotFoundException exception) {
             //return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
@@ -63,9 +62,9 @@ public class ProductController {
     @PostMapping("/products")
     public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO) {
         try {
-            Product newProduct = productDTOMapper.toEntity(productDTO);
+            Product newProduct = ProductDTOMapper.toEntity(productDTO);
             newProduct = productService.addProduct(newProduct);
-            return new ResponseEntity<>(productDTOMapper.toDTO(newProduct), HttpStatus.CREATED);
+            return new ResponseEntity<>(ProductDTOMapper.toDTO(newProduct), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -74,10 +73,10 @@ public class ProductController {
     @PutMapping("/products/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") Long productId, @RequestBody ProductDTO productDTO) {
         try {
-            Product product = productDTOMapper.toEntity(productDTO);
+            Product product = ProductDTOMapper.toEntity(productDTO);
             product = productService.updateProduct(productId, product);
 
-            return new ResponseEntity<>(productDTOMapper.toDTO(product), HttpStatus.OK);
+            return new ResponseEntity<>(ProductDTOMapper.toDTO(product), HttpStatus.OK);
         } catch (ProductNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

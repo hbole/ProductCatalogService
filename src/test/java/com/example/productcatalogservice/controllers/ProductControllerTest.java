@@ -49,7 +49,7 @@ class ProductControllerTest {
     }
 
     @Test
-    public void Test_GetProductById_WithInvalidId_ThrowsException() throws ProductNotFoundException {
+    public void Test_GetProductById_WithInvalidId_ThrowsException() {
         //Act and Assert
         ProductNotFoundException exception = assertThrows(
                 ProductNotFoundException.class,

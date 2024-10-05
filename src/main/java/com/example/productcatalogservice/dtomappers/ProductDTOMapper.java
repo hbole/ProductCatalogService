@@ -7,34 +7,25 @@ import com.example.productcatalogservice.models.Product;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductDTOMapper implements DTOMapper<Product, ProductDTO> {
-    private final CategoryDTOMapper categoryDTOMapper;
-
-    public ProductDTOMapper(CategoryDTOMapper categoryDTOMapper) {
-        this.categoryDTOMapper = categoryDTOMapper;
-    }
-
-    @Override
-    public ProductDTO toDTO(Product product) {
-        ProductDTO productDTO = new ProductDTO(
-                product.getId(),
-                product.getTitle(),
-                product.getDescription(),
-                product.getImageUrl(),
-                product.getPrice()
-        );
+public class ProductDTOMapper {
+    public static ProductDTO toDTO(Product product) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(product.getId());
+        productDTO.setTitle(product.getTitle());
+        productDTO.setDescription(product.getDescription());
+        productDTO.setPrice(product.getPrice());
+        productDTO.setImageUrl(product.getImageUrl());
 
         if(product.getCategory() != null) {
-            CategoryDTO categoryDTO = categoryDTOMapper.toDTO(product.getCategory());
+            CategoryDTO categoryDTO = CategoryDTOMapper.toDTO(product.getCategory());
             productDTO.setCategory(categoryDTO);
         }
 
         return productDTO;
     }
 
-    @Override
-    public Product toEntity(ProductDTO productDTO) {
-        Category category = categoryDTOMapper.toEntity(productDTO.getCategory());
+    public static Product toEntity(ProductDTO productDTO) {
+        Category category = CategoryDTOMapper.toEntity(productDTO.getCategory());
 
         Product product = new Product();
         product.setId(productDTO.getId());
