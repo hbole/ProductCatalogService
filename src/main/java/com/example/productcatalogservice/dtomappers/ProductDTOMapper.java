@@ -25,7 +25,6 @@ public class ProductDTOMapper {
     }
 
     public static Product toEntity(ProductDTO productDTO) {
-        Category category = CategoryDTOMapper.toEntity(productDTO.getCategory());
 
         Product product = new Product();
         product.setId(productDTO.getId());
@@ -33,9 +32,12 @@ public class ProductDTOMapper {
         product.setDescription(productDTO.getDescription());
         product.setImageUrl(productDTO.getImageUrl());
         product.setPrice(productDTO.getPrice());
-        product.setCategory(category);
         product.setIsPrimeSpecific(true);
 
+        if(productDTO.getCategory() != null) {
+            Category category = CategoryDTOMapper.toEntity(productDTO.getCategory());
+            product.setCategory(category);
+        }
         return product;
     }
 }

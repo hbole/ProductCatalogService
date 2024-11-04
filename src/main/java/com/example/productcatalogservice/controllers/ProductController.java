@@ -16,14 +16,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ProductController {
-    @Autowired
     private IProductService productService;
 
-//    public ProductController(
-//            IProductService productService
-//    ) {
-//        this.productService = productService;
-//    }
+    public ProductController(
+            IProductService productService
+    ) {
+        this.productService = productService;
+    }
 
     @GetMapping("/products")
     public ResponseEntity<List<ProductDTO>> getProducts() {
