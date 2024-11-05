@@ -17,7 +17,7 @@ public class Product extends BaseModel {
     private String imageUrl;
     private Double price;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Category category;
     private Boolean isPrimeSpecific;
 }

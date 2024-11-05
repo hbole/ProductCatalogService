@@ -15,6 +15,7 @@ import java.util.Date;
 //@EntityListeners(AuditingEntityListener.class)
 public class BaseModel {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @CreatedDate

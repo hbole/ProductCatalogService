@@ -77,6 +77,7 @@ public class ProductController {
 
             return new ResponseEntity<>(ProductDTOMapper.toDTO(product), HttpStatus.OK);
         } catch (ProductNotFoundException e) {
+            System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

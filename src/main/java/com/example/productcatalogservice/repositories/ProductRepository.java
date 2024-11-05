@@ -1,6 +1,8 @@
 package com.example.productcatalogservice.repositories;
 
 import com.example.productcatalogservice.models.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +19,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Override
     <S extends Product> S save(S product);
+
+    Page<Product> findProductByTitleEquals(String title, Pageable pageable);
 }
