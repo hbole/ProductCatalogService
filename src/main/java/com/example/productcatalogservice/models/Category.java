@@ -6,12 +6,13 @@ import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity(name = "categories")
-public class Category extends BaseModel {
+public class Category extends BaseModel implements Serializable {
     private String name;
     private String description;
 
