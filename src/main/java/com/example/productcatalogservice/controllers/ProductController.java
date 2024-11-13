@@ -81,4 +81,15 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("products/{productId}/{userId}")
+    public ResponseEntity<ProductDTO> getProductsBasedOnUserRole(@PathVariable Long productId, @PathVariable Long userId) {
+        try {
+            Product product = productService.getProductBasedOnUserRole(productId, userId);
+            System.out.println(" p " + product);
+            return new ResponseEntity<>(ProductDTOMapper.toDTO(product), HttpStatus.OK);
+        } catch(Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Primary
+//@Primary
 public class FakeStoreProductService implements IProductService {
     private final RestClientService restClientService;
     private final RedisTemplate<String, Object> productRedisTemplate;
@@ -80,5 +80,10 @@ public class FakeStoreProductService implements IProductService {
         FakeStoreProductDTO fakeStoreProductDTO = FakeStoreProductDTOMapper.toDTO(product);
         ResponseEntity<FakeStoreProductDTO> fakeStoreProductDTOResponseEntity = this.restClientService.requestForEntity(url, HttpMethod.PUT, fakeStoreProductDTO, FakeStoreProductDTO.class, id);
         return FakeStoreProductDTOMapper.toEntity(fakeStoreProductDTOResponseEntity.getBody());
+    }
+
+    @Override
+    public Product getProductBasedOnUserRole(Long productId, Long userId) {
+        return null;
     }
 }

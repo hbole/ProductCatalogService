@@ -12,14 +12,17 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class RestClientService {
-    private final RestTemplateBuilder restTemplateBuilder;
+//    private final RestTemplateBuilder restTemplateBuilder;
+    private final RestTemplate restTemplate;
 
-    public RestClientService(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplateBuilder = restTemplateBuilder;
+    public RestClientService(
+            RestTemplate restTemplate
+    ) {
+        this.restTemplate = restTemplate;
     }
 
     public  <T> ResponseEntity<T> requestForEntity(String url, HttpMethod httpMethod, @Nullable Object request, Class<T> responseType, Object... uriVariables) throws RestClientException {
-        RestTemplate restTemplate = restTemplateBuilder.build();
+//        RestTemplate restTemplate = restTemplateBuilder.build();
         RequestCallback requestCallback = restTemplate.httpEntityCallback(request, responseType);
         ResponseExtractor<ResponseEntity<T>> responseExtractor = restTemplate.responseEntityExtractor(responseType);
         return restTemplate.execute(url, httpMethod, requestCallback, responseExtractor, uriVariables);
